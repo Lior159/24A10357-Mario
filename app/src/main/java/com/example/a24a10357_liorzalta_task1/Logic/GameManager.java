@@ -3,37 +3,44 @@ package com.example.a24a10357_liorzalta_task1.Logic;
 import android.util.Log;
 
 import com.example.a24a10357_liorzalta_task1.Model.Entity;
+import com.example.a24a10357_liorzalta_task1.Model.EntityType;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameManager {
-    private int cols;
-    private int rows;
-    private int lives;  // max lives
+    private final int cols;
+    private final int rows;
+    private final int lives;  // max lives
     private int hits;
-    private int obstaclesInterval; // interval between obstacles creation
+    private final int interval; // interval between entities creation
     private int intervalCounter;
-    private Random rand = new Random();
+    private int score;
+    private final Random rand = new Random();
     private ArrayList<Entity> entities; // holds coordinates of player and existing obstacles
 
     public GameManager(){
-        this(3, 6, 3, 4);
+        this(3, 6, 3, 3);
     }
 
-    public GameManager(int lives, int rows, int cols, int obstaclesInterval){
+    public GameManager(int lives, int rows, int cols, int interval){
         this.cols = cols;
         this.rows = rows;
         this.lives = lives;
         this.hits = 0;
+        this.score = 0;
 
-        this.obstaclesInterval = obstaclesInterval;
+        this.interval = interval;
         this.intervalCounter = 0;
 
         this.entities = new ArrayList<>();
         this.entities.add(new Entity()
-                .setCords(rows-1, 1));  // create the player entity
+                .setCords(rows-1, 1)
+                .setEntityType(EntityType.PLAYER));  // create the player entity
     }
 
+    // gets entities coordinates.
+    // entities in this context are obstacles, rewards and lives
     public int[][] getEntitiesCords() {
         int[][] cords = new int[entities.size()][2];
 
@@ -42,6 +49,16 @@ public class GameManager {
             cords[i][1] = entities.get(i).getCords()[1];
         }
         return cords;
+    }
+
+    public EntityType[] getEntitiesType() {
+        EntityType[] types = new EntityType[entities.size()];
+
+        for (int i = 0; i < types.length; i++){
+            types[i] = entities.get(i).getEntityType();
+        }
+
+        return types;
     }
 
     public int getHits() {
@@ -53,45 +70,80 @@ public class GameManager {
     }
 
     public void generateObstacle(){
+        int random_number = rand.nextInt(14);
+        EntityType entityType;
+        //probability 1/13
+        if (hits > 0 && random_number == 0)
+            entityType = EntityType.LIFE;
+
+        //probability 8/13
+        else if (random_number <= 8)
+            entityType = EntityType.OBSTACLE;
+
+        //probability 5/13
+        else
+            entityType = EntityType.REWARD;
+
         entities.add(new Entity()
-                .setCords(0, rand.nextInt(cols)));
+                .setCords(0, rand.nextInt(cols))
+                .setEntityType(entityType));
 
         // reset counter for next obstacle
         intervalCounter = 0;
     }
 
-    public boolean moveObstacles(){
-        boolean isHit = false;
+    public int moveEntities(){
+        int isHit = 0; // 0-not hit, 1-hit obstacle,  2-hit reward, 3-hit life
 
         Entity player = entities.get(0);
         int[] playerCords = player.getCords();
 
         for (int i = 1; i < entities.size(); i++){
 
-            Entity obstacle = entities.get(i);
-            int[] obstacleCords = obstacle.getCords();
-            Log.d("cords before obst", obstacleCords[0] + ", " + obstacleCords[1]);
+            Entity entity = entities.get(i);
+            int[] entityCords = entity.getCords();
+            EntityType entityType = entity.getEntityType();
 
-            obstacleCords[0]++;
+            entityCords[0]++;
 
-            Log.d("cords after obst", obstacleCords[0] + ", " + obstacleCords[1]);
+            //entity hits the player
+            if (entityCords[0] == rows - 1 && entityCords[1] == playerCords[1]){
+                // obstacle hits the player
+                Log.d("hits before", hits + "");
+                if (entityType == EntityType.OBSTACLE){
+                    hits++;
+                    isHit = 1;
+                }
+                // reward hits the player
+                else if (entityType == EntityType.REWARD) {
+                    score += 100;
+                    isHit = 2;
+                }
+                // life hits the player
+                else if (entityType == EntityType.LIFE && hits > 0){
+                    hits--;
+                    isHit = 3;
+                }
+                Log.d("entityType", entityType.name());
+                Log.d("hits after", hits + "");
 
-            //obstacle hits the player
-            if (obstacleCords[0] == rows - 1 && obstacleCords[1] == playerCords[1]){
-                hits++;
-                isHit = true;
+
             }
-            //obstacle out of board
-            else if (obstacleCords[0] == rows){
+            //entity out of board
+            else if (entityCords[0] == rows){
                 entities.remove(i);
                 i--;
             }
         }
+
         intervalCounter++;
-        if (intervalCounter == obstaclesInterval)
+        if (intervalCounter == interval)
             generateObstacle();
+
         return isHit;
     }
+
+
 
     public void movePlayerRight(){
         if (entities.get(0).getCords()[1] < cols - 1)
@@ -108,6 +160,7 @@ public class GameManager {
         this.intervalCounter = 0;
         this.entities = new ArrayList<>();
         this.entities.add(new Entity()
-                .setCords(rows-1, 1));
+                .setCords(rows-1, 1)
+                .setEntityType(EntityType.PLAYER));
     }
 }

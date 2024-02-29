@@ -6,12 +6,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.a24a10357_liorzalta_task1.Logic.GameManager;
+import com.example.a24a10357_liorzalta_task1.Model.EntityType;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -20,8 +20,8 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final long DELAY = 1000;
-    private final int ROWS = 6;
-    private final int COLS = 3;
+    private final int ROWS = 7;
+    private final int COLS = 5;
     private final int MAX_LIVES = 3;
     private final int INTERVAL = 3;     // interval between obstacles creation
     private ShapeableImageView[] lives;
@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton main_BTN_left;
     private GameManager gameManager;    // handles all the games logic
     private Timer timer;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,32 +57,52 @@ public class MainActivity extends AppCompatActivity {
                         findViewById(R.id.main_IMG_cell00),
                         findViewById(R.id.main_IMG_cell01),
                         findViewById(R.id.main_IMG_cell02),
+                        findViewById(R.id.main_IMG_cell03),
+                        findViewById(R.id.main_IMG_cell04),
                 },
                 {
                         findViewById(R.id.main_IMG_cell10),
                         findViewById(R.id.main_IMG_cell11),
                         findViewById(R.id.main_IMG_cell12),
+                        findViewById(R.id.main_IMG_cell13),
+                        findViewById(R.id.main_IMG_cell14),
                 },
                 {
                         findViewById(R.id.main_IMG_cell20),
                         findViewById(R.id.main_IMG_cell21),
                         findViewById(R.id.main_IMG_cell22),
+                        findViewById(R.id.main_IMG_cell23),
+                        findViewById(R.id.main_IMG_cell24),
                 },
                 {
                         findViewById(R.id.main_IMG_cell30),
                         findViewById(R.id.main_IMG_cell31),
                         findViewById(R.id.main_IMG_cell32),
+                        findViewById(R.id.main_IMG_cell33),
+                        findViewById(R.id.main_IMG_cell34),
                 },
                 {
                         findViewById(R.id.main_IMG_cell40),
                         findViewById(R.id.main_IMG_cell41),
                         findViewById(R.id.main_IMG_cell42),
+                        findViewById(R.id.main_IMG_cell43),
+                        findViewById(R.id.main_IMG_cell44),
                 },
                 {
                         findViewById(R.id.main_IMG_cell50),
                         findViewById(R.id.main_IMG_cell51),
                         findViewById(R.id.main_IMG_cell52),
+                        findViewById(R.id.main_IMG_cell53),
+                        findViewById(R.id.main_IMG_cell54),
                 },
+                {
+                        findViewById(R.id.main_IMG_cell60),
+                        findViewById(R.id.main_IMG_cell61),
+                        findViewById(R.id.main_IMG_cell62),
+                        findViewById(R.id.main_IMG_cell63),
+                        findViewById(R.id.main_IMG_cell64),
+                },
+
         };
     }
 
@@ -103,17 +122,10 @@ public class MainActivity extends AppCompatActivity {
                     .into(lives[i]);
         }
 
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                if (i < ROWS - 1)
-                    Glide.with(this)
-                            .load(R.drawable.bowser)
-                            .into(cells[i][j]);
-                else
-                    Glide.with(this)
-                            .load(R.drawable.mario)
-                            .into(cells[i][j]);
-            }
+        for (int i = 0; i < COLS; i++) {
+            Glide.with(this)
+                    .load(R.drawable.mario)
+                    .into(cells[ROWS-1][i]);
         }
     }
 
@@ -129,20 +141,33 @@ public class MainActivity extends AppCompatActivity {
 
     // update the game logic after each clock cycle
     private void nextCycle() {
-        boolean isHit = gameManager.moveObstacles();
+        int isHit = gameManager.moveEntities();
 
-        if (isHit) {
+        if (isHit == 1) {
             vibrate();
+            // make hits obstacle sound
+        }
+
+        if (isHit == 2) {
+            vibrate();
+            // make hits reward sound
+        }
+
+        if (isHit == 3) {
+            vibrate();
+            // make hits life sound
         }
 
         if (gameManager.isLost()) {
             toast("GAME OVER");
             resetGame();
+            return;
         }
 
         //separate refresh actions - motivation is the times that only player moves
         refreshPlayerArea();
         refreshObstaclesArea();
+        refreshHearts();
     }
 
     // refresh player area (first line)
@@ -158,11 +183,12 @@ public class MainActivity extends AppCompatActivity {
     // refresh obstacles area
     private void refreshObstaclesArea() {
         int[][] layoutState = gameManager.getEntitiesCords();   // coordinates of all existing obstacles
+        EntityType[] entitiesType = gameManager.getEntitiesType();
 
         for (int i = 1; i < layoutState.length; i++) {
             int row = layoutState[i][0];
             int col = layoutState[i][1];
-            Log.d("cords in refresh", row + ", " + col);
+            EntityType entityType = entitiesType[i];
 
             //make obstacle previous location invisible
             if (row > 0){
@@ -172,12 +198,44 @@ public class MainActivity extends AppCompatActivity {
             //won't display obstacles in player area (first cell)
             if (row < ROWS - 1){
                 cells[row][col].setVisibility(View.VISIBLE);
+
+                if (entityType == EntityType.OBSTACLE){
+                    Glide.with(this)
+                            .load(R.drawable.bowser)
+                            .into(cells[row][col]);
+                }
+                else if (entityType == EntityType.REWARD){
+                    Glide.with(this)
+                            .load(R.drawable.coin)
+                            .into(cells[row][col]);
+                }
+                else{
+                    Glide.with(this)
+                            .load(R.drawable.mushroom)
+                            .into(cells[row][col]);
+                }
             }
         }
-        if (gameManager.getHits() > 0)
-            lives[MAX_LIVES - gameManager.getHits()].setVisibility(View.INVISIBLE);
     }
 
+    // refresh hearts based on last hitting status
+    // 0-not hit, 1-hit obstacle,  2-hit reward, 3-hit life
+    public void refreshHearts(){
+        if (gameManager.getHits() == 0){
+            lives[0].setVisibility(View.VISIBLE);
+            lives[1].setVisibility(View.VISIBLE);
+        }
+
+        else if (gameManager.getHits() == 1){
+            lives[0].setVisibility(View.INVISIBLE);
+            lives[1].setVisibility(View.VISIBLE);
+        }
+
+        else if (gameManager.getHits() == 2){
+            lives[0].setVisibility(View.INVISIBLE);
+            lives[1].setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void resetGame() {
         gameManager.resetGame();    // reset game logic

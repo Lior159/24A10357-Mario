@@ -35,7 +35,7 @@ public class GameManager {
 
         this.entities = new ArrayList<>();
         this.entities.add(new Entity()
-                .setCords(rows-1, 1)
+                .setCords(rows-1, 2)
                 .setEntityType(EntityType.PLAYER));  // create the player entity
     }
 
@@ -63,6 +63,10 @@ public class GameManager {
 
     public int getHits() {
         return hits;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public boolean isLost(){
@@ -93,6 +97,7 @@ public class GameManager {
     }
 
     public int moveEntities(){
+        score += 10;
         int isHit = 0; // 0-not hit, 1-hit obstacle,  2-hit reward, 3-hit life
 
         Entity player = entities.get(0);
@@ -116,7 +121,7 @@ public class GameManager {
                 }
                 // reward hits the player
                 else if (entityType == EntityType.REWARD) {
-                    score += 100;
+                    score += 90;
                     isHit = 2;
                 }
                 // life hits the player
@@ -158,6 +163,7 @@ public class GameManager {
     public void resetGame(){
         this.hits = 0;
         this.intervalCounter = 0;
+        score = 0;
         this.entities = new ArrayList<>();
         this.entities.add(new Entity()
                 .setCords(rows-1, 1)

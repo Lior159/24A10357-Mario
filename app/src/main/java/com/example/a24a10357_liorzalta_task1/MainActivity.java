@@ -14,6 +14,7 @@ import com.example.a24a10357_liorzalta_task1.Logic.GameManager;
 import com.example.a24a10357_liorzalta_task1.Model.EntityType;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private ShapeableImageView[][] cells;   // game cells consist of player area (first line) and obstacles area
     private MaterialButton main_BTN_right;
     private MaterialButton main_BTN_left;
+
+    private MaterialTextView main_LBL_score;
     private GameManager gameManager;    // handles all the games logic
     private Timer timer;
 
@@ -44,8 +47,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void findViews() {
+        main_LBL_score = findViewById(R.id.main_LBL_score);
         main_BTN_left = findViewById(R.id.main_BTN_left);
         main_BTN_right = findViewById(R.id.main_BTN_right);
+
         lives = new ShapeableImageView[]{
                 findViewById(R.id.main_IMG_heart1),
                 findViewById(R.id.main_IMG_heart2),
@@ -136,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 runOnUiThread(() -> nextCycle());
             }
-        }, 0, DELAY);
+        }, 3000, DELAY);
     }
 
     // update the game logic after each clock cycle
@@ -167,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         //separate refresh actions - motivation is the times that only player moves
         refreshPlayerArea();
         refreshObstaclesArea();
-        refreshHearts();
+        refreshUpperSection();
     }
 
     // refresh player area (first line)
@@ -220,7 +225,9 @@ public class MainActivity extends AppCompatActivity {
 
     // refresh hearts based on last hitting status
     // 0-not hit, 1-hit obstacle,  2-hit reward, 3-hit life
-    public void refreshHearts(){
+    public void refreshUpperSection(){
+        main_LBL_score.setText("Score: " + gameManager.getScore());
+
         if (gameManager.getHits() == 0){
             lives[0].setVisibility(View.VISIBLE);
             lives[1].setVisibility(View.VISIBLE);

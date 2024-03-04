@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainMenu">
+    tools:context=".MenuActivity">
 
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -28,39 +28,40 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/menu_IMG_Title"
         android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:layout_below="@+id/menu_IMG_Title">
+        android:orientation="vertical">
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_BTN_buttons_mode"
             android:layout_width="230dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_500"
             android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/red_500"
+            android:fontFamily="@font/alfa_slab_one"
             android:text="Play With Arrows"
-            android:fontFamily="@font/alfa_slab_one"
             android:textSize="18sp"
 
             />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_BTN_tilt_mode"
             android:layout_width="230dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_500"
             android:layout_marginBottom="20dp"
-            android:text="Play With Tilt"
+            android:backgroundTint="@color/red_500"
             android:fontFamily="@font/alfa_slab_one"
-            android:textSize="18sp"
-             />
+            android:text="Play With Tilt"
+            android:textSize="18sp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_BTN_scores"
             android:layout_width="230dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/red_500"
-            android:text="Top Scores"
             android:fontFamily="@font/alfa_slab_one"
-            android:textSize="18sp"
-            />
+            android:text="Top Scores"
+            android:textSize="18sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

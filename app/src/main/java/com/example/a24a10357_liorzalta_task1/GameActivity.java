@@ -1,17 +1,18 @@
 package com.example.a24a10357_liorzalta_task1;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.a24a10357_liorzalta_task1.Logic.GameManager;
 import com.example.a24a10357_liorzalta_task1.Model.EntityType;
+import com.example.a24a10357_liorzalta_task1.Utilities.ImageLoader;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
@@ -19,17 +20,19 @@ import com.google.android.material.textview.MaterialTextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
     private static final long DELAY = 1000;
     private final int ROWS = 7;
     private final int COLS = 5;
     private final int MAX_LIVES = 3;
     private final int INTERVAL = 3;     // interval between obstacles creation
+    public static final String KEY_GAME_MODE = "KEY_GAME_MODE";
+    private ImageLoader imgLoader = new ImageLoader(this);
+    private boolean timerOn = false;
     private ShapeableImageView[] lives;
     private ShapeableImageView[][] cells;   // game cells consist of player area (first line) and obstacles area
     private MaterialButton main_BTN_right;
     private MaterialButton main_BTN_left;
-
     private MaterialTextView main_LBL_score;
     private GameManager gameManager;    // handles all the games logic
     private Timer timer;
@@ -37,13 +40,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_game);
 
         gameManager = new GameManager(MAX_LIVES, ROWS, COLS, INTERVAL);
 
         findViews();
         initViews();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         startGame();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startGame();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopGame();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopGame();
     }
 
     private void findViews() {
@@ -56,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.main_IMG_heart2),
                 findViewById(R.id.main_IMG_heart3)
         };
+
+        cells = new ShapeableImageView[ROWS][COLS];
 
         cells = new ShapeableImageView[][]{
                 {
@@ -122,31 +150,49 @@ public class MainActivity extends AppCompatActivity {
         });
 
         for (int i = 0; i < MAX_LIVES; i++) {
-            Glide.with(this)
-                    .load(R.drawable.mario_life)
-                    .into(lives[i]);
+            imgLoader.loadImg(R.drawable.mario_life, lives[i]);
         }
 
         for (int i = 0; i < COLS; i++) {
-            Glide.with(this)
-                    .load(R.drawable.mario)
-                    .into(cells[ROWS-1][i]);
+            imgLoader.loadImg(R.drawable.mario, cells[ROWS - 1][i]);
         }
     }
 
     private void startGame() {
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(() -> nextCycle());
-            }
-        }, 3000, DELAY);
+        if (!timerOn) {
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(() -> nextCycle());
+                }
+            }, 1000, DELAY);
+            timerOn = true;
+        }
+    }
+
+    private void stopGame() {
+        if (timerOn) {
+            timer.cancel();
+            timerOn = false;
+        }
+    }
+
+    private void endGame() {
+        toast("GAME OVER");
+        stopGame();
+        saveRecord();
+        redirectToMenu();
+    }
+
+    private void saveRecord() {
+        double lat = 0;
+        double lon = 0;
     }
 
     // update the game logic after each clock cycle
     private void nextCycle() {
-        int isHit = gameManager.moveEntities();
+        int isHit = gameManager.moveEntities(); // 0-not hit, 1-hit obstacle,  2-hit reward, 3-hit life
 
         if (isHit == 1) {
             vibrate();
@@ -164,14 +210,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (gameManager.isLost()) {
-            toast("GAME OVER");
-            resetGame();
+            endGame();
             return;
         }
 
         //separate refresh actions - motivation is the times that only player moves
         refreshPlayerArea();
-        refreshObstaclesArea();
+        refreshEntitiesArea();
         refreshUpperSection();
     }
 
@@ -186,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // refresh obstacles area
-    private void refreshObstaclesArea() {
+    private void refreshEntitiesArea() {
         int[][] layoutState = gameManager.getEntitiesCords();   // coordinates of all existing obstacles
         EntityType[] entitiesType = gameManager.getEntitiesType();
 
@@ -205,28 +250,21 @@ public class MainActivity extends AppCompatActivity {
                 cells[row][col].setVisibility(View.VISIBLE);
 
                 if (entityType == EntityType.OBSTACLE){
-                    Glide.with(this)
-                            .load(R.drawable.bowser)
-                            .into(cells[row][col]);
+                    imgLoader.loadImg(R.drawable.bowser, cells[row][col]);
                 }
                 else if (entityType == EntityType.REWARD){
-                    Glide.with(this)
-                            .load(R.drawable.coin)
-                            .into(cells[row][col]);
+                    imgLoader.loadImg(R.drawable.coin, cells[row][col]);
                 }
                 else{
-                    Glide.with(this)
-                            .load(R.drawable.mushroom)
-                            .into(cells[row][col]);
+                    imgLoader.loadImg(R.drawable.mushroom, cells[row][col]);
                 }
             }
         }
     }
 
-    // refresh hearts based on last hitting status
-    // 0-not hit, 1-hit obstacle,  2-hit reward, 3-hit life
     public void refreshUpperSection(){
-        main_LBL_score.setText("Score: " + gameManager.getScore());
+        String text = "Score: " + gameManager.getScore();
+        main_LBL_score.setText(text);
 
         if (gameManager.getHits() == 0){
             lives[0].setVisibility(View.VISIBLE);
@@ -244,20 +282,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void resetGame() {
-        gameManager.resetGame();    // reset game logic
-
-        // reset game view
-        for (int i = 0; i < MAX_LIVES; i++) {
-            lives[i].setVisibility(View.VISIBLE);
-        }
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                cells[i][j].setVisibility(View.INVISIBLE);
-            }
-        }
+    private void redirectToMenu(){
+        Intent menuIntent = new Intent(this, MenuActivity.class);
+        startActivity(menuIntent);
+        finish();
     }
-
 
     private void toast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show();
@@ -267,6 +296,4 @@ public class MainActivity extends AppCompatActivity {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
     }
-
-
 }

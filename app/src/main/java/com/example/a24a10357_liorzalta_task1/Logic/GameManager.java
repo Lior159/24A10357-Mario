@@ -74,17 +74,17 @@ public class GameManager {
     }
 
     public void generateObstacle(){
-        int random_number = rand.nextInt(14);
+        int random_number = rand.nextInt(15);
         EntityType entityType;
-        //probability 1/13
+        //probability 1/15
         if (hits > 0 && random_number == 0)
             entityType = EntityType.LIFE;
 
-        //probability 8/13
-        else if (random_number <= 8)
+        //probability 12/15
+        else if (random_number <= 12)
             entityType = EntityType.OBSTACLE;
 
-        //probability 5/13
+        //probability 2/15
         else
             entityType = EntityType.REWARD;
 
@@ -114,7 +114,6 @@ public class GameManager {
             //entity hits the player
             if (entityCords[0] == rows - 1 && entityCords[1] == playerCords[1]){
                 // obstacle hits the player
-                Log.d("hits before", hits + "");
                 if (entityType == EntityType.OBSTACLE){
                     hits++;
                     isHit = 1;
@@ -129,10 +128,6 @@ public class GameManager {
                     hits--;
                     isHit = 3;
                 }
-                Log.d("entityType", entityType.name());
-                Log.d("hits after", hits + "");
-
-
             }
             //entity out of board
             else if (entityCords[0] == rows){

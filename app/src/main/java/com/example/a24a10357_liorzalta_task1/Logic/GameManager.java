@@ -146,11 +146,15 @@ public class GameManager {
 
 
     public void movePlayerRight(){
+        Log.d("game manger", "movePlayerRight");
+
         if (entities.get(0).getCords()[1] < cols - 1)
             entities.get(0).getCords()[1]++;
     }
 
     public void movePlayerLeft(){
+        Log.d("game manger", "movePlayerleft");
+
         if (entities.get(0).getCords()[1] > 0)
             entities.get(0).getCords()[1]--;
     }

@@ -1,5 +1,7 @@
 package com.example.a24a10357_liorzalta_task1.Model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,7 +13,7 @@ public class RecordsList {
 
     public RecordsList setRecords(ArrayList<Record> records) {
         this.records = records;
-        Collections.sort(records);
+        Collections.sort(records, Collections.reverseOrder());
         return this;
     }
 
@@ -24,6 +26,7 @@ public class RecordsList {
         for(int i = 0; i < length && i < records.size(); i++){
             topRecords.add(this.records.get(i));
         }
+        Collections.sort(topRecords, Collections.reverseOrder());
         return topRecords;
     }
 

@@ -54,4 +54,14 @@ public class Record implements Comparable<Record>{
         else
             return 0;
     }
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "score=" + score +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

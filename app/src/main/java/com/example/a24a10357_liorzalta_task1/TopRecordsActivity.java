@@ -11,8 +11,6 @@ import com.example.a24a10357_liorzalta_task1.Interfaces.Callback_recordClicked;
 
 public class TopRecordsActivity extends AppCompatActivity {
 
-    private FrameLayout topRecords_LBL_records;
-    private FrameLayout topRecords_LBL_map;
     private RecordsFragment recordsFragment;
     private MapFragment mapFragment;
 
@@ -28,9 +26,8 @@ public class TopRecordsActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        mapFragment = new MapFragment();
-        recordsFragment = new RecordsFragment();
-        recordsFragment.setContext(this);
+        mapFragment = new MapFragment(this);
+        recordsFragment = new RecordsFragment(this);
         recordsFragment.setCallbackRecordClicked(new Callback_recordClicked() {
             @Override
             public void recordClicked(double lat, double lon) {

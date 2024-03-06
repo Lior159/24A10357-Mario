@@ -7,18 +7,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.a24a10357_liorzalta_task1.Adapters.RecordAdapter;
 import com.example.a24a10357_liorzalta_task1.Interfaces.Callback_recordClicked;
-import com.example.a24a10357_liorzalta_task1.Interfaces.RecordCallBack;
 import com.example.a24a10357_liorzalta_task1.Model.Record;
 import com.example.a24a10357_liorzalta_task1.R;
-import com.example.a24a10357_liorzalta_task1.Utilities.RecordsManager;
-import com.google.android.material.textview.MaterialTextView;
+import com.example.a24a10357_liorzalta_task1.Utilities.RecordsUtil;
 
 import java.util.ArrayList;
 
@@ -29,7 +26,8 @@ public class RecordsFragment extends Fragment {
     private AppCompatActivity context;
     private ArrayList<Record> records;
 
-    public RecordsFragment() {
+    public RecordsFragment(AppCompatActivity context) {
+        this.context = context;
     }
 
     @Override
@@ -39,10 +37,6 @@ public class RecordsFragment extends Fragment {
 
         findViews(view);
         initViews(view);
-//        fRecords_LST_recordsList.setOnClickListener(v -> {
-//            if (callbackRecordClicked != null)
-//                callbackRecordClicked.recordClicked(10, 20);
-//        });
         return view;
     }
 
@@ -51,7 +45,7 @@ public class RecordsFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        this.records = RecordsManager.getInstance().getTopRecords(5);
+        this.records = RecordsUtil.getInstance().getTopRecords(10);
         RecordAdapter recordAdapter = new RecordAdapter(this.context, this.records);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.context);
@@ -70,7 +64,4 @@ public class RecordsFragment extends Fragment {
         this.callbackRecordClicked = callbackRecordClicked;
     }
 
-    public void setContext(AppCompatActivity context){
-        this.context = context;
-    }
 }

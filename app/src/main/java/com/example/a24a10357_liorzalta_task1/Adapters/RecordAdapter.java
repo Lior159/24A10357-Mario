@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.a24a10357_liorzalta_task1.Interfaces.RecordCallBack;
@@ -39,10 +40,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
     @Override
     public void onBindViewHolder(@NonNull RecordViewHolder holder, int position) {
         Record record = getRecord(position);
-        holder.recordLine_LBL_line.setText("#" + position);
+        holder.recordLine_LBL_line.setText("#" + (position + 1));
         holder.recordLine_LBL_date.setText("Date: " + record.getDate());
         holder.recordLine_LBL_score.setText("Score: " + record.getScore());
-        holder.recordLine_LBL_line.setOnClickListener(v -> {
+        holder.recordLine_LINE_line.setOnClickListener(v -> {
             if (recordCallBack != null){
                 recordCallBack.recordClicked(position, record);
             }
@@ -59,12 +60,14 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordView
     }
 
     public class RecordViewHolder extends RecyclerView.ViewHolder {
+        private LinearLayoutCompat recordLine_LINE_line;
         private MaterialTextView recordLine_LBL_line;
         private MaterialTextView recordLine_LBL_score;
         private MaterialTextView recordLine_LBL_date;
 
         public RecordViewHolder(@NonNull View itemView) {
             super(itemView);
+            recordLine_LINE_line = itemView.findViewById(R.id.recordLine_LINE_line);
             recordLine_LBL_line = itemView.findViewById(R.id.recordLine_LBL_line);
             recordLine_LBL_score = itemView.findViewById(R.id.recordLine_LBL_score);
             recordLine_LBL_date = itemView.findViewById(R.id.recordLine_LBL_date);

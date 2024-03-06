@@ -1,8 +1,13 @@
 package com.example.a24a10357_liorzalta_task1;
 
 import android.app.Application;
+import android.util.Log;
 
-import com.example.a24a10357_liorzalta_task1.Utilities.RecordsManager;
+import com.example.a24a10357_liorzalta_task1.Model.Record;
+import com.example.a24a10357_liorzalta_task1.Utilities.RecordsUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class App extends Application {
 
@@ -10,7 +15,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        RecordsManager.init(this);
-
+        RecordsUtil.init(this);
     }
 }

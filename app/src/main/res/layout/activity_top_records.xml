@@ -12,13 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/red_500"/>
+        android:layout_margin="4dp"/>
 
     <FrameLayout
         android:id="@+id/topRecords_LBL_map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/indigo_50"/>
+        android:layout_margin="4dp"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -30,6 +30,8 @@ public class SensorsUtil {
             public void onSensorChanged(SensorEvent event) {
                 float x = event.values[0];
                 float y = event.values[1];
+                float z = event.values[2];
+                Log.d("[X,Y,Z]", x + " , " +y +" , "+ z);
                 makeMove(x, y);
             }
 
@@ -42,25 +44,22 @@ public class SensorsUtil {
     private void makeMove(float x, float y){
         if (System.currentTimeMillis() - timestamp > 500) {
             timestamp = System.currentTimeMillis();
-            Log.d("xxxxxxxxxxxxxxxxxxxxx" ,x +"");
-//            Log.d("yyyyyyyyyyyyyyyyyyyyy" , y+"");
-
 
             if (moveCallBack != null){
-                if (x > 2.5f) {
+                if (x > 2.0f) {
                     moveCallBack.tiltRight();
                 }
 
-                else if (x < -2.5f) {
+                else if (x < -2.0f) {
                     moveCallBack.tiltLeft();
                 }
 
-                if (y > 2.5f) {
-                    moveCallBack.tiltDown();
+                if (y < 4.5f ) {
+                    moveCallBack.tiltUp();
                 }
 
-                else if (y < -2.5f) {
-                    moveCallBack.tiltUp();
+                else  {
+                    moveCallBack.tiltDown();
                 }
             }
         }

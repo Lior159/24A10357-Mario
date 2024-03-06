@@ -30,8 +30,6 @@ public class SensorsUtil {
             public void onSensorChanged(SensorEvent event) {
                 float x = event.values[0];
                 float y = event.values[1];
-                float z = event.values[2];
-                Log.d("[X,Y,Z]", x + " , " +y +" , "+ z);
                 makeMove(x, y);
             }
 
@@ -47,11 +45,11 @@ public class SensorsUtil {
 
             if (moveCallBack != null){
                 if (x > 2.0f) {
-                    moveCallBack.tiltRight();
+                    moveCallBack.tiltLeft();
                 }
 
                 else if (x < -2.0f) {
-                    moveCallBack.tiltLeft();
+                    moveCallBack.tiltRight();
                 }
 
                 if (y < 4.5f ) {

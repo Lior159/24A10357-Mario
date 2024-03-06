@@ -387,41 +387,31 @@
                 tools:src="@drawable/ic_launcher_foreground"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/default_cell_height"
-            android:layout_marginHorizontal="@dimen/default_margin"
-            android:layout_below="@id/main_LINEAR_line6" >
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/main_BTN_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_LINEAR_line6"
+        android:layout_alignParentStart="true"
+        app:icon="@drawable/finger_left"
+        app:iconSize="@dimen/default_cell_height"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="@color/black"
+        android:backgroundTint="@color/indigo_50"
+        android:contentDescription="move left"/>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/main_BTN_left"
-                android:layout_width="@dimen/default_cell_width"
-                android:layout_height="match_parent"
-                app:icon="@drawable/finger_left"
-                app:iconSize="@dimen/default_cell_height"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/black"
-                android:backgroundTint="@color/indigo_50"
-                android:contentDescription="move left"/>
-
-            <View
-                android:layout_width="@dimen/default_cell_width"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/default_cell_horizontal_margin"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/main_BTN_right"
-                android:layout_width="@dimen/default_cell_width"
-                android:layout_height="match_parent"
-                app:icon="@drawable/finger_right"
-                app:iconSize="@dimen/default_cell_height"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:iconTint="@color/black"
-                android:backgroundTint="@color/indigo_50"
-                android:contentDescription="move right"/>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/main_BTN_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_LINEAR_line6"
+        android:layout_alignParentEnd="true"
+        app:icon="@drawable/finger_right"
+        app:iconSize="@dimen/default_cell_height"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        android:backgroundTint="@color/indigo_50"
+        android:contentDescription="move right"/>
 
 </RelativeLayout>
